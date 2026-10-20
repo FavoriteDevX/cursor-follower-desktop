@@ -1,0 +1,26 @@
+name: Build and Release Executable
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers whenever you push a version tag (e.g., v1.0.0)
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Compile C++ Code
+      run: g++ src/main.cpp -o wavy-desktop.exe -mwindows
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: wavy-desktop.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
