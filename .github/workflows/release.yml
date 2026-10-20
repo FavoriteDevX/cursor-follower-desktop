@@ -10,16 +10,20 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Set up MSBuild
-      uses: microsoft/setup-msbuild@v1.1
+    - name: Setup MSYS2 (C++ Compiler)
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: mingw-w64-x86_64-gcc
 
     - name: Compile C++ Code
-      run: g++ src/main.cpp -o wavy-desktop.exe -mwindows
+      shell: msys2 {0}
+      run: g++ -O2 src/main.cpp -o wavy-desktop.exe -mwindows -luser32 -lcomctl32
 
     - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: wavy-desktop.exe
       env:
